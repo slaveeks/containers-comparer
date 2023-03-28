@@ -21,7 +21,7 @@ type Db struct {
 func (db *Db) Insert(data Data) {
 	p := influxdb2.NewPointWithMeasurement("stat").
 		AddTag("name", data.Name).
-		AddField("time", data.Time).
+		AddField("duration", data.Time).
 		AddField("ram", data.Ram).
 		SetTime(time.Now())
 	err := db.api.WritePoint(context.Background(), p)

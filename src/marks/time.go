@@ -14,7 +14,7 @@ func (t *Time) TakeDiff() int {
 	diff := t.end.Sub(t.start)
 
 	fmt.Println(diff)
-	
+
 	return int(diff.Milliseconds())
 }
 
