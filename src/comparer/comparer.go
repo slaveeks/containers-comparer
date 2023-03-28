@@ -1,6 +1,7 @@
 package comparer
 
 import (
+	"awesomeProject/src/db"
 	"awesomeProject/src/marks"
 	"fmt"
 	"os"
@@ -18,6 +19,7 @@ const (
 type UtilTester struct {
 	name UtilType
 	path string
+	db   *db.Db
 }
 
 func (u *UtilTester) BuildImage() {
@@ -47,7 +49,8 @@ func (u *UtilTester) BuildImage() {
 	timer.TakeDiff()
 }
 
-func CreateUtilTester(name UtilType, path string) *UtilTester {
+func CreateUtilTester(name UtilType, path string, db *db.Db) *UtilTester {
 	return &UtilTester{name: name,
-		path: path}
+		path: path,
+		db:   db}
 }
