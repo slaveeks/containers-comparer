@@ -4,6 +4,6 @@ WORKDIR /app
 
 RUN pip3 install Flask
 
-COPY .. .
+COPY . .
 
 CMD [ "python3", "app.py"]

@@ -1,12 +1,12 @@
 package main
 
 import (
+	"awesomeProject/pkg/influxdb"
 	"awesomeProject/src/comparer"
-	"fmt"
 )
 
 func main() {
-	fmt.Println("123")
+	influxdb.ConnectToInfluxDB("localhost:8086", "user:password")
 	c := comparer.CreateUtilTester("podman", "./test-app/check")
 	c.BuildImage()
 }
