@@ -2,7 +2,8 @@ package comparer
 
 import (
 	"awesomeProject/src/marks"
-	"log"
+	"fmt"
+	"os"
 	"os/exec"
 	"time"
 )
@@ -24,14 +25,21 @@ func (u *UtilTester) BuildImage() {
 
 	t1 := time.Now()
 
-	marks.GetCurrentMemoryUsage()
-
-	err := cmd.Run()
-	marks.GetCurrentMemoryUsage()
-
+	err := cmd.Start()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Error starting command: ", err)
+		os.Exit(1)
 	}
+
+	marks.GetCurrentMemoryUsage(cmd)
+
+	// Wait for the command to finish and print any errors
+	err = cmd.Wait()
+	if err != nil {
+		fmt.Println("Command finished with error: ", err)
+		os.Exit(1)
+	}
+
 	t2 := time.Now()
 
 	timer := marks.CreateTimeMark(t1, t2)
