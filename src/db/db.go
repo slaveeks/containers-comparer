@@ -1,7 +1,6 @@
 package db
 
 import (
-	"awesomeProject/src/comparer"
 	"context"
 	influxdb2 "github.com/influxdata/influxdb-client-go"
 	"github.com/influxdata/influxdb-client-go/api"
@@ -11,7 +10,7 @@ import (
 type Data struct {
 	time int
 	ram  int
-	name comparer.UtilType
+	name string
 }
 
 type Db struct {
@@ -20,7 +19,7 @@ type Db struct {
 
 func (db *Db) Insert(data Data) {
 	p := influxdb2.NewPointWithMeasurement("stat").
-		AddTag("name", string(data.name)).
+		AddTag("name", data.name).
 		AddField("time", data.time).
 		AddField("ram", data.ram).
 		SetTime(time.Now())
