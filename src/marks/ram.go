@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func GetCurrentMemoryUsage(cmd *exec.Cmd) {
+func GetCurrentMemoryUsage(cmd *exec.Cmd) int {
 	pid := fmt.Sprintf("%d", cmd.Process.Pid)
 	output, err := exec.Command("ps", "-p", pid, "-o", "rss=").Output()
 	if err != nil {
@@ -23,4 +23,6 @@ func GetCurrentMemoryUsage(cmd *exec.Cmd) {
 		os.Exit(1)
 	}
 	fmt.Println("RAM usage during build: ", ramUsage, "KB")
+
+	return ramUsage
 }

@@ -33,7 +33,7 @@ func (u *UtilTester) BuildImage() {
 		os.Exit(1)
 	}
 
-	marks.GetCurrentMemoryUsage(cmd)
+	kb := marks.GetCurrentMemoryUsage(cmd)
 
 	// Wait for the command to finish and print any errors
 	err = cmd.Wait()
@@ -46,7 +46,16 @@ func (u *UtilTester) BuildImage() {
 
 	timer := marks.CreateTimeMark(t1, t2)
 
-	timer.TakeDiff()
+	ms := timer.TakeDiff()
+
+	name := string(u.name)
+
+	data := db.Data{ms,
+		kb,
+		name,
+	}
+
+	u.db.Insert(data)
 }
 
 func CreateUtilTester(name UtilType, path string, db *db.Db) *UtilTester {

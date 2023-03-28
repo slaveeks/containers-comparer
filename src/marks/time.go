@@ -10,10 +10,12 @@ type Time struct {
 	end   time.Time
 }
 
-func (t *Time) TakeDiff() {
+func (t *Time) TakeDiff() int {
 	diff := t.end.Sub(t.start)
 
 	fmt.Println(diff)
+	
+	return int(diff.Milliseconds())
 }
 
 func CreateTimeMark(start time.Time, end time.Time) *Time {
