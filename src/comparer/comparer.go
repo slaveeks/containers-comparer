@@ -17,9 +17,10 @@ const (
 )
 
 type UtilTester struct {
-	name UtilType
-	path string
-	db   *db.Db
+	name       UtilType
+	path       string
+	db         *db.Db
+	testNumber int
 }
 
 func (u *UtilTester) BuildImage() {
@@ -60,6 +61,7 @@ func (u *UtilTester) BuildImage() {
 	data := db.Data{ms,
 		kb,
 		name,
+		u.testNumber,
 	}
 
 	u.db.Insert(data)
@@ -88,8 +90,9 @@ func (u *UtilTester) CallSystemctl(command string) error {
 	return cmd.Run()
 }
 
-func CreateUtilTester(name UtilType, path string, db *db.Db) *UtilTester {
+func CreateUtilTester(name UtilType, path string, db *db.Db, testNumber int) *UtilTester {
 	return &UtilTester{name: name,
-		path: path,
-		db:   db}
+		path:       path,
+		db:         db,
+		testNumber: testNumber}
 }

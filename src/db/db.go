@@ -5,13 +5,13 @@ import (
 	"fmt"
 	influxdb2 "github.com/influxdata/influxdb-client-go"
 	"github.com/influxdata/influxdb-client-go/api"
-	"time"
 )
 
 type Data struct {
-	Time int
-	Ram  int
-	Name string
+	Time        int
+	Ram         int
+	Name        string
+	CheckNumber int
 }
 
 type Db struct {
@@ -22,8 +22,7 @@ func (db *Db) Insert(data Data) {
 	p := influxdb2.NewPointWithMeasurement("stat").
 		AddTag("name", data.Name).
 		AddField("duration", data.Time).
-		AddField("ram", data.Ram).
-		SetTime(time.Now())
+		AddField("ram", data.Ram).AddField("check_number", data.CheckNumber)
 	err := db.api.WritePoint(context.Background(), p)
 	if err != nil {
 		panic(err)
