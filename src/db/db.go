@@ -19,10 +19,10 @@ type Db struct {
 }
 
 func (db *Db) Insert(data Data) {
-	p := influxdb2.NewPointWithMeasurement("stat").
-		AddTag("name", data.Name).
+	p := influxdb2.NewPointWithMeasurement(data.Name).
 		AddField("duration", data.Time).
-		AddField("ram", data.Ram).AddField("check_number", data.CheckNumber)
+		AddField("ram", data.Ram).
+		AddField("check_number", data.CheckNumber)
 	err := db.api.WritePoint(context.Background(), p)
 	if err != nil {
 		panic(err)

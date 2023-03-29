@@ -5,6 +5,7 @@ import (
 	"awesomeProject/src/comparer"
 	"awesomeProject/src/db"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -13,5 +14,8 @@ func main() {
 	for i := 0; i <= 5; i++ {
 		c := comparer.CreateUtilTester("podman", "./test-app/check"+strconv.Itoa(i), d, i)
 		c.BuildImage()
+		time.Sleep(20 * time.Second)
+		c.RunContainer()
+		time.Sleep(20 * time.Second)
 	}
 }

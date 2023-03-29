@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -31,7 +33,7 @@ func (u *UtilTester) BuildImage() {
 		os.Exit(1)
 	}
 
-	cmd := exec.Command(string(u.name), "build", u.path)
+	cmd := exec.Command(string(u.name), "build", u.path, "-t", "image"+strconv.Itoa(u.testNumber))
 
 	t1 := time.Now()
 
@@ -77,17 +79,57 @@ func (u *UtilTester) BuildImage() {
 func (u *UtilTester) CallSystemctl(command string) error {
 	var cmd *exec.Cmd
 
-	cmd = exec.Command("systemctl", command, string(u.name)+".socket")
+	if command == "stop" {
+		cmd = exec.Command("systemctl", command, string(u.name)+".socket")
 
-	err := cmd.Run()
+		err := cmd.Run()
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
 	cmd = exec.Command("systemctl", command, string(u.name))
 
 	return cmd.Run()
+}
+
+func (u *UtilTester) RunContainer() {
+	err := u.CallSystemctl("start")
+
+	if err != nil {
+		fmt.Println("Error systemctl start: ", err)
+		os.Exit(1)
+	}
+
+	t1 := time.Now()
+	cmd := exec.Command("docker", "run", "-t", "image"+strconv.Itoa(u.testNumber))
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	containerID := strings.TrimSpace(string(out))
+	t2 := time.Now()
+
+	timer := marks.CreateTimeMark(t1, t2)
+
+	ms := timer.TakeDiff()
+	fmt.Printf("Container started in %d ms\n", ms)
+
+	ramCmd := exec.Command("docker", "stats", "--no-stream", containerID, "--format", "{{.MemUsage}}")
+	ramOut, err := ramCmd.Output()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	ramUsage := strings.TrimSpace(string(ramOut))
+	fmt.Printf("Container RAM usage: %s\n", ramUsage)
+
+	if err != nil {
+		fmt.Println("Error systemctl stop: ", err)
+		os.Exit(1)
+	}
 }
 
 func CreateUtilTester(name UtilType, path string, db *db.Db, testNumber int) *UtilTester {
