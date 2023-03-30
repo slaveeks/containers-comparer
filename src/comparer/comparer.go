@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -103,10 +104,10 @@ func (u *UtilTester) RunContainer() {
 	}
 
 	t1 := time.Now()
-	cmd := exec.Command("docker", "run", "-t", "image"+strconv.Itoa(u.testNumber))
+	cmd := exec.Command(string(u.name), "run", "-d", "-t", "image"+strconv.Itoa(u.testNumber))
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error while running image", err)
 		return
 	}
 	containerID := strings.TrimSpace(string(out))
@@ -117,14 +118,23 @@ func (u *UtilTester) RunContainer() {
 	ms := timer.TakeDiff()
 	fmt.Printf("Container started in %d ms\n", ms)
 
-	ramCmd := exec.Command("docker", "stats", "--no-stream", containerID, "--format", "{{.MemUsage}}")
+	ramCmd := exec.Command(string(u.name), "stats", "--no-stream", containerID, "--format", "{{.MemUsage}}")
 	ramOut, err := ramCmd.Output()
+
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error while getting docker stats", err)
 		return
 	}
+
 	ramUsage := strings.TrimSpace(string(ramOut))
-	fmt.Printf("Container RAM usage: %s\n", ramUsage)
+
+	re := regexp.MustCompile(`^\d+`)
+
+	match := re.FindString(ramUsage)
+
+	num, _ := strconv.Atoi(match)
+
+	fmt.Printf("Container RAM usage: %d\n", num)
 
 	if err != nil {
 		fmt.Println("Error systemctl stop: ", err)
