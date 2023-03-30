@@ -17,6 +17,7 @@ type UtilType string
 const (
 	Podman UtilType = "podman"
 	Docker          = "docker"
+	Img             = "img"
 )
 
 type UtilTester struct {
@@ -27,18 +28,21 @@ type UtilTester struct {
 }
 
 func (u *UtilTester) BuildImage() {
-	err := u.CallSystemctl("start")
 
-	if err != nil {
-		fmt.Println("Error systemctl start: ", err)
-		os.Exit(1)
+	if u.name == "docker" || u.name == "podman" {
+		err := u.CallSystemctl("start")
+
+		if err != nil {
+			fmt.Println("Error systemctl start: ", err)
+			os.Exit(1)
+		}
 	}
 
 	cmd := exec.Command(string(u.name), "build", u.path, "-t", "image"+strconv.Itoa(u.testNumber))
 
 	t1 := time.Now()
 
-	err = cmd.Start()
+	err := cmd.Start()
 	if err != nil {
 		fmt.Println("Error starting command: ", err)
 		os.Exit(1)
@@ -69,12 +73,15 @@ func (u *UtilTester) BuildImage() {
 
 	u.db.Insert(data)
 
-	err = u.CallSystemctl("stop")
+	if u.name == "docker" || u.name == "podman" {
+		err = u.CallSystemctl("stop")
 
-	if err != nil {
-		fmt.Println("Error systemctl stop: ", err)
-		os.Exit(1)
+		if err != nil {
+			fmt.Println("Error systemctl stop: ", err)
+			os.Exit(1)
+		}
 	}
+
 }
 
 func (u *UtilTester) CallSystemctl(command string) error {
