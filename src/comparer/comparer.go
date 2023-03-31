@@ -2,7 +2,6 @@ package comparer
 
 import (
 	"awesomeProject/src/comparer/images"
-	"awesomeProject/src/db"
 	"fmt"
 	"strconv"
 )
@@ -10,7 +9,6 @@ import (
 type UtilTester struct {
 	name       images.UtilType
 	path       string
-	db         *db.Db
 	testNumber int
 }
 
@@ -24,9 +22,8 @@ func (u *UtilTester) BuildImage() {
 
 }
 
-func CreateUtilTester(name images.UtilType, path string, db *db.Db, testNumber int) *UtilTester {
+func CreateUtilTester(name images.UtilType, path string, testNumber int) *UtilTester {
 	return &UtilTester{name: name,
 		path:       path,
-		db:         db,
 		testNumber: testNumber}
 }
