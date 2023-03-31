@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -114,8 +115,12 @@ func (ic *ImageComparer) extractImageSize(output string) int {
 			line := strings.Fields(lines[i])
 
 			if strings.Contains(line[0], ic.imageName) {
-				fmt.Println(line[1])
-				return 1
+				re := regexp.MustCompile(`^\d+`)
+
+				match := re.FindString(line[1])
+
+				num, _ := strconv.Atoi(match)
+				return num
 			}
 		}
 	}
@@ -126,9 +131,7 @@ func (ic *ImageComparer) extractImageSize(output string) int {
 		return size
 	}
 
-	sizeStr := parts[len(parts)-1]
-
-	size, _ := strconv.Atoi(sizeStr[:len(sizeStr)-2])
+	size := utils.MegabytesToInt(parts[len(parts)-1])
 
 	return size
 }

@@ -3,6 +3,8 @@ package utils
 import (
 	"fmt"
 	"os/exec"
+	"regexp"
+	"strconv"
 )
 
 func CallSystemctl(command string, arg string) {
@@ -14,4 +16,14 @@ func CallSystemctl(command string, arg string) {
 	if err != nil {
 		fmt.Println("Error while executing systemctl command " + command + " " + arg)
 	}
+}
+
+func MegabytesToInt(str string) int {
+	re := regexp.MustCompile(`^\d+`)
+
+	match := re.FindString(str)
+
+	num, _ := strconv.Atoi(match)
+
+	return num
 }

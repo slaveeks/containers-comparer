@@ -5,8 +5,6 @@ import (
 	"awesomeProject/src/utils"
 	"fmt"
 	"os/exec"
-	"regexp"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -54,11 +52,7 @@ func (c *ContainerComparer) RunContainer() {
 
 	ramUsage := strings.TrimSpace(string(ramOut))
 
-	re := regexp.MustCompile(`^\d+`)
-
-	match := re.FindString(ramUsage)
-
-	num, _ := strconv.Atoi(match)
+	num := utils.MegabytesToInt(ramUsage)
 
 	fmt.Printf("Container RAM usage: %d\n", num)
 
