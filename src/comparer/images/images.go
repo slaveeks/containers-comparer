@@ -78,8 +78,13 @@ func (ic *ImageComparer) TestBuildingImage() CompareData {
 	// Get time for executing command
 	timer := marks.CreateTimeMark(t1, t2)
 	ms := timer.TakeDiff()
+	if utility == "img" {
+		cmd = exec.Command(utility, "ls")
 
-	cmd = exec.Command(utility, "images", ic.imageName)
+	} else {
+		cmd = exec.Command(utility, "images", ic.imageName)
+	}
+
 	var imagesOutput bytes.Buffer
 	cmd.Stdout = &imagesOutput
 	err = cmd.Run()
@@ -103,9 +108,20 @@ func (ic *ImageComparer) TestBuildingImage() CompareData {
 
 func (ic *ImageComparer) extractImageSize(output string) int {
 	lines := strings.Split(output, "\n")
+
+	if string(ic.Utility) == "img" {
+		for i := 0; i < len(lines); i++ {
+			line := strings.Fields(lines[i])
+
+			if strings.Contains(line[0], ic.imageName) {
+				fmt.Println(line[1])
+				return 1
+			}
+		}
+	}
 	parts := strings.Fields(lines[1])
 
-	if string(ic.Utility) == "podman" {
+	if string(ic.Utility) == "podman" || string(ic.Utility) == "buildah" {
 		size, _ := strconv.Atoi(parts[len(parts)-2])
 		return size
 	}
