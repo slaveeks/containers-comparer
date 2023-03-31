@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -16,7 +17,7 @@ type UtilType string
 type CompareData struct {
 	buildTime      int
 	buildRamUsage  int
-	buildImageSize string
+	buildImageSize int
 }
 
 // Constants for building images
@@ -87,7 +88,7 @@ func (ic *ImageComparer) TestBuildingImage() CompareData {
 	}
 
 	// extract the size of the image from the `docker images` output
-	size := extractImageSize(imagesOutput.String())
+	size := ic.extractImageSize(imagesOutput.String())
 
 	// Stop systemd services
 	if ic.Utility == "docker" || ic.Utility == "podman" {
@@ -100,16 +101,20 @@ func (ic *ImageComparer) TestBuildingImage() CompareData {
 		buildTime:     ms}
 }
 
-func extractImageSize(output string) string {
+func (ic *ImageComparer) extractImageSize(output string) int {
 	lines := strings.Split(output, "\n")
-	if len(lines) < 2 {
-		return ""
-	}
 	parts := strings.Fields(lines[1])
-	if len(parts) < 8 {
-		return ""
+
+	if string(ic.Utility) == "podman" {
+		size, _ := strconv.Atoi(parts[len(parts)-2])
+		return size
 	}
-	return parts[6]
+
+	sizeStr := parts[len(parts)-1]
+
+	size, _ := strconv.Atoi(sizeStr[:len(sizeStr)-2])
+
+	return size
 }
 
 func CreateImageComparer(utility UtilType, imageName string, imagePath string) *ImageComparer {
