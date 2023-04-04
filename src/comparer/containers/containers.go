@@ -13,9 +13,8 @@ type UtilType string
 
 // Constants for running containers
 const (
-	Podman     UtilType = "podman"
-	Docker              = "docker"
-	containerd          = "containerd"
+	Podman UtilType = "podman"
+	Docker          = "docker"
 )
 
 type ContainerComparer struct {
@@ -60,4 +59,8 @@ func (c *ContainerComparer) RunContainer() {
 	utils.CallSystemctl("stop", utility)
 	utils.CallSystemctl("stop", utility+".socket")
 
+}
+
+func CreateContainersComparer(imageName string, utility UtilType) *ContainerComparer {
+	return &ContainerComparer{imageName: imageName, Utility: utility}
 }

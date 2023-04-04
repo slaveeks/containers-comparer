@@ -1,28 +1,25 @@
 package comparer
 
 import (
-	"awesomeProject/src/comparer/images"
-	"fmt"
+	"awesomeProject/src/comparer/containers"
 	"strconv"
 )
 
 type UtilTester struct {
-	name       images.UtilType
+	name       containers.UtilType
 	path       string
 	testNumber int
 }
 
 func (u *UtilTester) BuildImage() {
 
-	imageComparer := images.CreateImageComparer(u.name, "image"+strconv.Itoa(u.testNumber), u.path)
+	c := containers.CreateContainersComparer("image"+strconv.Itoa(u.testNumber), u.name)
 
-	data := imageComparer.TestBuildingImage()
-
-	fmt.Println(data)
+	c.RunContainer()
 
 }
 
-func CreateUtilTester(name images.UtilType, path string, testNumber int) *UtilTester {
+func CreateUtilTester(name containers.UtilType, path string, testNumber int) *UtilTester {
 	return &UtilTester{name: name,
 		path:       path,
 		testNumber: testNumber}
