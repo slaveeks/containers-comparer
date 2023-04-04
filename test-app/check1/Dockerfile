@@ -1,9 +1,17 @@
-FROM python:3.8-slim-buster
+# Build stage
+FROM golang:1.16 AS build
 
 WORKDIR /app
 
-RUN pip3 install Flask
-
 COPY . .
 
-CMD [ "python3", "app.py"]
+RUN go build -o main .
+
+# Final stage
+FROM debian:buster-slim
+
+WORKDIR /app
+
+COPY --from=build /app/main .
+
+CMD ["./main"]

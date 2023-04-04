@@ -1,9 +1,13 @@
-FROM python:3.8-slim-buster
+FROM nginx:latest
 
-WORKDIR /app
+# Remove default nginx configuration file
+RUN rm /etc/nginx/conf.d/default.conf
 
-RUN pip3 install Flask
+# Copy custom nginx configuration file
+COPY nginx.conf /etc/nginx/conf.d/
 
-COPY . .
+# Expose port 80
+EXPOSE 80
 
-CMD [ "python3", "app.py"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,9 +1,7 @@
-FROM python:3.8-slim-buster
+FROM postgres
 
-WORKDIR /app
+ENV POSTGRES_USER postgres
+ENV POSTGRES_PASSWORD postgres
+ENV POSTGRES_DB postgres
 
-RUN pip3 install Flask
-
-COPY . .
-
-CMD [ "python3", "app.py"]
+EXPOSE 5432

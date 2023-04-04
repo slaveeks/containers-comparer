@@ -13,8 +13,9 @@ type UtilType string
 
 // Constants for running containers
 const (
-	Podman UtilType = "podman"
-	Docker          = "docker"
+	Podman     UtilType = "podman"
+	Docker              = "docker"
+	containerd          = "containerd"
 )
 
 type ContainerComparer struct {
